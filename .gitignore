@@ -31,4 +31,5 @@
 # Debug files
 *.dSYM/
 
-.idea/
+build
+.idea
