@@ -18,3 +18,5 @@ If you don't want to use clion or you want to do things manually:
     $ echo "Hello! This is a silly example ;)" | ./uppercaser
 
 Enjoy! :)
+
+testing
