@@ -1,39 +1,82 @@
-// Author: Peter Membrey
-// Date: 30/05/2015
-// Very simple application to get us started!
-
 /*
- * Note: This approach works because of the way
- * ASCII lays out the character set - this will
- * work with most text, but be warned about UTF-8
- * or non ASCII characters..
+ * =====================================================================================
+ *
+ *       Filename:  rot13.c
+ *
+ *    Description:  Implementation of the ROT13 encryption
+ *
+ *        Version:  1.0
+ *        Created:  Friday, June 05, 2015 11:20:26 HKT
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  Steven Chien (sc), steven.chien@connect.polyu.hk
+ *        Company:  The Hong Kong Polytechnic University, Hong Kong
+ *
+ * =====================================================================================
  */
 
-
 #include <stdio.h>
+#include <getopt.h>
+#include <stdlib.h>
+#include <ctype.h>
 
-char c;
 
-int main() {
-    do {
-        // Read a character from stdin
-        c = fgetc(stdin);
-        // End of file? Nothing left to read...
-        if (feof(stdin)) {
-            // Exit loop
-            break;
-        }
-
-        // Is the character lower case?
-        if ((c >= 'a') && (c <= 'z')) {
-            // Yes, let's make it upper case
-            c -= 32;
-        }
-        // Print the character to stdout (default)
-        printf("%c", c);
-    } while (1);
-    // Exit cleanly
-    return 0;
-
+void print_usage() {
+	printf("./caser [option]\n");
+	printf("options: -k [shift length]\n");
+	printf("Default key: 13\n");
 }
 
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  mod
+ *  Description:  Simple implementation of mod operator
+ * =====================================================================================
+ */
+unsigned mod(int a, unsigned b) {
+	return (a >= 0 ? a % b : b - (-a) % b);
+}
+
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  main
+ *  Description:  Main function
+ * =====================================================================================
+ */
+int main(int argc, char *argv[]) {
+
+	/* default key size */
+	int key = 13;
+	char c;
+
+	/* parse command line options */
+	int option;
+	while ((option = getopt(argc, argv,"k:"))!=-1) {
+		switch (option) {
+			case 'k': key = atoi(optarg);
+			break;
+			default: print_usage(); 
+		}
+	}
+
+	/*-----------------------------------------------------------------------------
+	 *  if character read is an alphabet, shift by length specified by key
+	 *  offset by value specified for that alphabet in ASCII before applying
+	 *  encryption, re-apply the offset afterwards
+	 *-----------------------------------------------------------------------------*/
+	while((c=fgetc(stdin))!=EOF) {
+		if(isalpha(c) && isupper(c)) {
+			c = mod((c - 65 + key), 26) + 65;
+		}
+		else if(isalpha(c) && islower(c)) {
+			c = mod((c - 97 + key), 26) + 97;
+
+		}
+		printf("%c", c);
+	}
+
+	return 0;
+}				/* ----------  end of function main  ---------- */
